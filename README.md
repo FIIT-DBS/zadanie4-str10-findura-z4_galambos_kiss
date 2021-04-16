@@ -1,36 +1,56 @@
 "# zadanie4-str10-findura-z4_galambos_kiss" 
 
-### Users
-
+___
+## Users
 Tabuľka **Users** predstavuje používateľa v systéme, ktorý môže byť zaregistrovaný pomocou vlastného e-mailu alebo pomocou účtov Facebook alebo Google. [`registered_with`]
 
 - Pri registrácií s vlastným e-mailom sa vyžaduje, aby používateľ zadal svoj meno a priezvisko [`first_and_last_name`]. Pri registrácií s Facebook/Google tieto údaje budú automaticky prevzaté z danej stránky.
 - Používateľské meno [`username`] zvolí používateľ počas registrácie.
 - Vo všetkých prípadoch je potrebné, aby používateľ vytvoril heslo [`password`] k svojho účtu.  
 - Ak registrácia uskutočnila pomocou vlastného e-mailu, vyžaduje sa verifikácia [`verified_with`] e-mailovej adresy. Na druhej strane, ak používateľ na registráciu používal svoj Facebook alebo Google účet, je automaticky verifikovaný.
-- Používateľ musí mať aspoň 18 rokov, aby mohol registrovať a teda hrať túto hru. Vek je vypočítaný podľa dátumu narodenia [`date_of_birth`].
+- Používateľ musí mať aspoň 18 rokov, aby mohol hrať túto hru. Vek je vypočítaný podľa dátumu narodenia [`date_of_birth`].
 - Každý používateľ môze mať viac konverzácií (**Converstations**) a v rámci konverzácie viac správ (**Message**).
 
-### Converstations
 
+## Use case
+Používateľ zaregistruje vybraním jednej metódy (tj. e-mail, facebook, Google) do hry. Aplikácia následne vyexportuje jeho priateľov, ktorý sú tiež zaregistrovaný a ponúkne používateľovi možnosť, pridať si ich medzi priateľov aj v samotnej hre.
+Hráč, ktorý je priateľom používateľa na sociálnej sieti v hre môže byť medzi zablokovanými ľudmi. Tiež platí, ak používateľ chce zobraziť štatistiky iného používateľa, musia byť v hre priateľmi.
+Hráč, ktorý sa zaregistroval a nemá 18 rokov, tak sa jeho e-mail a dátum narodenia uloží, a keď dovŕší 18 rokov, príde mu notifikácia na e-mail, že môže už hru hrať, a vytvoriť si postavu.
+___
+
+
+## Friendships
+Tabuľka **Friendships** predstavuje vzťah medzi dvoma používateľmi [`id_requester -> Users.id` a `id_addresee -> Users.id`] v hre.
+
+- Každý friendship má stav [`status`] a ten môže byť: `1` - *requested*, `2` - *accepted*, `3` - *declined*, `4` - *blocked*.
+
+
+## Converstations
 Tabuľka **Conversation** predstavuje konverzácie používateľa. **Users** môže mať koľkokoľvek konverzácií.
 - Konverzácia má prijímateľa [`receiver_id -> Users.id`] a odosielateľa  [`sender_id -> Users.id`] a každá konverzácia obsahuje 0 až n správ (**Message**)
 
-### Team_converstations
 
+## Team_converstations
 Tabuľka **Team_converstations** predstavuje tímovú konverzáciu medzi členmi
 
 - Tímová konverzácia obsahuje `team_id -> Teams.id`, ktorý je spojený so skupinou **Teams** a prijímatelia budú všetci členovia skupiny okrem odosielateľa ktorý je definovaný v tabuľke **Message**
 
-### Message
 
+## Message
 Tabuľka **Message** predstavuje jednu správu v danej konverzácie.
 
 - Správa môže byť súčasťou aj normálnej aj tímovej konverzácie [`conversation_id -> Converstations.id` alebo `conversation_id -> Team_converstations.id`]
 - Správa obsahuje dátum, kedy bol odoslaný [`sent_at`]
 
-### Characters
 
+## Use case
+Podmienkou komunikácie, teda vytvorenie konverzácie je, aby kontaktovaný používateľ nebol medzi zablokovanými. Napríklad User1 zablokoval Usera2. Po nejakom čase sa User1 rozhodul, že kontaktuje Usera2, avšak toto mu nebude umožnené, kým ho neodblokuje. Teda blokovanie sa vzťahuje na obe strany, ale odblokovať vie len tá strana, ktorá blokovanie iniciovala.
+Každá konverzácia sa vzťahuje k používateľovi, ktorý je buď odosielateľom alebo prijímateľom niektorej správy v rámci konverzácie. Každá správa obsahuje text, ktorá je zobrazovaná zo stĺpca [`text`].
+Konverzácia sa môže vzťahovať aj k viacerým používateľom, ak ide o tímový chat. V tom prípade ak v rámci tímu používateľ pošle správu do takéhoto chatu, prijímatelia budú všetci členovia tímu okrem neho.
+
+
+___
+## Characters
 Tabuľka **Characters** predstavuje jednu postavu, ktorej vlastníkom [`owner -> User.id`] je používateľ (**Users**)
 
 - Každý charakter má práve jednu rolu [`role -> Roles.id`].
@@ -41,8 +61,8 @@ Tabuľka **Characters** predstavuje jednu postavu, ktorej vlastníkom [`owner ->
 - Každý charakter má práve jeden inventár [`inventory_id -> Inventory.id`].
 - Každý charakter má počet úspešne dokončených úloh [`quest_count`].
 
-### Monsters
 
+## Monsters
 Tabuľka **Monsters** predstavuje jednu príšeru, ktorá má niektoré charakteristiky rovnaké ako postava **Characters**
 
 - Príšera môže byť šéf [`is_boss`].
@@ -51,21 +71,20 @@ Tabuľka **Monsters** predstavuje jednu príšeru, ktorá má niektoré charakte
 - Každá príšera má stav zabitia [`is_killed`].
 
 
-### Creature_stats
-
+## Creature_stats
 Tabuľka **Creature_stats** predstavuje vlastnosti jednej postavy alebo jedného príšera [`creature_id -> Characters.id` alebo `creature_id -> Monsters.id`]
 
 - Postava/Príšera má zdravotné body [`hp`].
 - Postava/Príšera má počet životov [`lives`].
 - Postava/Príšera má útočnú hodnotu [`attack`].
 - Postava/Príšera má obrannú hodnotu [`defense`].
+- Postava/Príšera má určitú rýchlosť [`speed`], ktorou sa pohybuje na mape.
 - Postava/Príšera má x-ovú pozíciu na mapu, kde sa momentálne nachádza [`x_position`].
 - Postava/Príšera má y-ovú pozíciu na mapu, kde sa momentálne nachádza [`y_position`].
 - Postava/Príšera vždy nachádza na niektorej mape [`map_id -> Maps.id`].
 
 
-### Roles
-
+## Roles
 Tabuľka **Roles** predstavuje rolu jednej postavy (**Characters**)
 
 - Na základe používateľom vybranej roli budú modifikované štatistiky postavy 
@@ -73,14 +92,29 @@ Tabuľka **Roles** predstavuje rolu jednej postavy (**Characters**)
 - `Creature_stats.defense` bude vynásobené s konštantou `defense_cons`
 - `Creature_stats.hp` bude vynásobené s konštantou `hp_cons`
 
-### Skill_list
 
+## Use case
+Ak používateľ vytvorí novú postavu, musí si vybrať nejakú rolu (bojovník, čarodejník, lukostrelec), ktorú potom nie je možné zmeniť. Nová postava má level 1, jej začiatočné statistiky sú vopred určené podľa roli. Napríklad čarodejník má konštantu na attack 1.2, konštantu na defense 1.5 a konštantu na hp 1.3.
+Jeho finálne štatistiky budú `attack = 5 * 1.2 = 6`, `defense = 5 * 1.5 = 7.5` a `hp = 5 * 1.3 = 6.5`. Každá rola má iné konštanty, ale na začiatku konštanty dávajú sumu 4. 
+
+| Rola        | Attack | Defense | HP  |
+|-------------|--------|---------|-----|
+| Bojovník    | 1.5    | 1.3     | 1.2 |
+| Čarodejník  | 1.2    | 1.5     | 1.3 |
+| Lukostrelec | 1.3    | 1.2     | 1.5 |
+
+Finálne konštanty závisia aj od vybavenia postavy (zbraň, brnenie, štít).
+Za zabitie príšeri postava získava skúsenostné body v závislosti od úrovne hráča a taktiež príšery. Príšera je vždy na rovnakej úrovni, ako postava. Obyčajnú príšeru stačí iba raz zabiť, ale šéf môže mať viac životov.
+
+
+___
+## Skill_list
 Tabuľka **Skill_list** predstavuje zoznam schopností pre danú rolu
 
 - Na základe používateľom vybranej roli [`role_id` -> Roles.id] bude priradený zoznam schopností pre postavy (**Characters**)
 
-### Skills
 
+## Skills
 Tabuľka **Skills** predstavuje jednu schopnosť, ktorá patrí do zoznamu schopností [`skill_list_id -> Skill_list.id`] danej roli 
 
 - Každá schopnosť má meno
@@ -88,30 +122,33 @@ Tabuľka **Skills** predstavuje jednu schopnosť, ktorá patrí do zoznamu schop
 - Každá schopnosť vyžaduje určitú úroveň postavy
 
 
-### Friendships
+## Use case
+Ak postava postúpi na novú úroveň, musí vybrať jednu novú schopnosť, teda nemôže mať nevyužité body. Schopnosti predstavujú stromovú štruktúru, kde postava sama určí, ktorou cestou sa vyberie v strome. To znamená, že ak postava zvolil niektorú vetvu, nemôže sa vrátiť a otvoriť inú.
+Na výber budú vždy 3 vetvy. Schopnostný zoznam bude nadväzovať na zvolenú rolu postavy (napr.: čarodejník nemôže mať schopnosť bojovníka).
 
-Tabuľka **Friendships** predstavuje vzťah medzi dvoma používateľmi [`id_requester -> Users.id` a `id_addresee -> Users.id`] v hre.
 
-- Každý friendship má stav [`status`] a ten môže byť: `1` - *requested*, `2` - *accepted*, `3` - *declined*, `4` - *blocked*.
-
-### Teams
-
+___
+## Teams
 Tabuľka **Teams** predstavuje skupinu hráčov. Skupiny umožňujú, aby členovia mohli medzi sebou komunikovať pomocou chatu.
 
 - Každý tím má meno  [`name`].
 - Každý tím má admina [`admin_id -> Users.id`], ktorý vytvoril skupinu.
 
 
-### Members
-
+## Members
 Tabuľka **Members** predstavuje členov tímu (**Teams**) 
 
 - Atribút `team_id` definuje ku ktorému tímu patrí daný člen.
 - V rámci tímov má každý hráč vlastné identifikačné číslo [`member_id`].
 
 
-### Quests
+## Use case
+Tím vytvára jeden používateľ, ktorý sa zároveň stáva aj vedúcim tímu. Pozvánka do tímu vie poslať druhému používateľovi len vedúci a to pomocou linku. Výhodou byť členom tímu je možnosť využívať tímový chat.
+Ďalšou zaujímavou funkciu tímu je možnosť zúčastniť sa tímovej bitky.
 
+
+___
+## Quests
 Tabuľka **Quests** predstavuje jednu úlohu v hre.
 
 - Každá úloha má určitý požadovaný level, aby k nej bolo možné prístúpiť [`required_level`].
@@ -124,8 +161,7 @@ Tabuľka **Quests** predstavuje jednu úlohu v hre.
 - Každá úloha má nejaký popis s inštrukciami a požiadavkami, ktoré postava musí dokončiť a splniť. [`text`].
 
 
-### Maps
-
+## Maps
 Tabuľka **Maps** charakterizuje hracie pole v hre
 
 - Atribút [`name`] predstavuje názov danej mapy.
@@ -133,8 +169,14 @@ Tabuľka **Maps** charakterizuje hracie pole v hre
 - Mapa má šírku [`width`] aj výšku [`height`]. Tieto atribúty definujú jej veľkosť a priestor, v ktorom sa môže postava pohybovať.
 
 
-### Battle
+## Use case
+Hra obsahuje určitý počet úloh, avšak niektoré nie sú povinné. Každá úloha sa vzťahuje na mapu, kde sa odohráva. Na prejdenie hry sa vyžaduje ukončenie vopred daných úloh, ktoré sú povinné. 
+Na mape môžu byť umiestnené príšery, postavy a koristi. Na mapu môže vstúpiť postava len vtedy, ak dosiahol určitú úroveň.
 
+___
+
+
+## Battle
 Tabuľka **Battle** predstavuje bitku v hre.
 
 - Každá bitka je buď PVP [`type -> PVP_battle.id`] alebo PVE [`type -> PVE_battle.id`].
@@ -143,23 +185,21 @@ Tabuľka **Battle** predstavuje bitku v hre.
 - Bitka môže byť aj tímová, ak dva tímy bojujú proti sebe [`team1_id -> Teams.id` a `team2_id -> Teams.id`]. Ak nejde o tímový boj, tieto atribúty majú hodnotu `null`.
 
 
-### PVP_battle
-
+## PVP_battle
 Tabuľka **PVP_battle** predstavuje bitku, kde hráč bojuje proti inému hráčovi.
 
 - `player1_id -> Characters.id` a `player2_id -> Characters.id` predstavujú účastníkov bitky.
 - `battle_id -> Characters.id` ukazuje na postavu, ktorý bitku inicioval.
 
 
-### PVE_battle
-
+## PVE_battle
 Tabuľka **PVE_battle** predstavuje bitku, kde hráč bojuje proti príšerovi.
 
 - `character_id -> Characters.id` a `monster_id -> Monsters.id` predstavujú účastníkov bitky.
 - `battle_id -> Characters.id` ukazuje na postavu.
 
-### Combat_log
 
+## Combat_log
 Tabuľka **Combat_log** predstavuje udalosti, ktoré sa udiali počas bitky.
 
 - Atribút `attacker_id -> Characters.id` alebo `attacker_id -> Monsters.id` hovorí o tom, kto ako zaútočil na druhého v bitke.
@@ -169,15 +209,20 @@ Tabuľka **Combat_log** predstavuje udalosti, ktoré sa udiali počas bitky.
 - Atribút `exp_difference -> Characters.exp` je hodnota, ktorá sa buď pripočíta alebo odpočíta z ceľkovej hodnoty skúsenostných bodov.
 - Atribút `battle_type_id -> PVE_battle.id` alebo `battle_type_id -> PVP_battle.id` hovorí o typu bitky.
 
-### Inventory
+## Use case
+Scenár: Postava sa stretne s príšerou na mape a zaútočí na ňu. Vyhodnotí sa, že ide o PVE battle. Postava použije schopnosť rotating sword, ktorá spôsobí 50 damage na príšera. Príšera stratila veľkú časť svojho hp, ale udrie postavu s mečou a spôsobí30 damage na postavu. Postava so svojou mečou následne spôsobí kritickú škodu príšere (70 damage). Keďže príšera mal celkom 100 zdravotných bodov a len jeden život, jej zdravotné body sa stanú záporným, teda sa zmení počet životov na 0 a stane sa mŕtvim. Víťazom sa stane postava, ktorá získa 100 skúsenostných bodov.
 
+
+___
+## Inventory
 Tabuľka **Inventory** predstavuje kapsu s predmetmi, ktorú postava vlastní.
 
-- Postava môže mať oblečené brnenie a môže mať pri sebe nejakú zbraň. Tieto predmety su definované v tabuľke **Equipped_gear**.
+- Postava môže mať oblečené brnenie, držať štít a môže mať pri sebe nejakú zbraň. Tieto predmety su definované v tabuľke **Equipped_gear**.
+- Kapacita [`capacity`] určuje koľko predmetov môže byť v kapse.
+- Kapsa, ktorá je plná, spomalí hráča (**Creature_stats**)
 
 
-### Equipped_gear
-
+## Equipped_gear
 Tabuľka **Equipped_gear** predstavuje tri predmety, ktoré sa nachádzaju v kapse postavy a zaroveň je nimi postava vyzbrojená.
 
 - Zbraň [`weapon`] má vlastné identifikačné číslo, ktoré ukazuje na tabuľku Gear, kde je uvedená jej sila.
@@ -185,23 +230,31 @@ Tabuľka **Equipped_gear** predstavuje tri predmety, ktoré sa nachádzaju v kap
 - Štít [`shield`] má vlastné identifikačné číslo, ktoré ukazuje na tabuľku Gear, kde je uvedená jeho sila.
 
 
-### Gear
-
+## Gear
 Tabuľka **Gear** definuje silu daného predmetu
 
-- Atribút `name` predstavuje názov predmetu
-- Atribút `attack_cons` hovorí o tom, akou konštantou sa prenasobí ceľková hodnota útočného čisla `Creature_stats.attack`
-- Atribút `defense_cons` hovorí o tom, akou konštantou sa prenasobí ceľková hodnota obranného čisla `Creature_stats.defense`
-- Atribút `hp_cons` hovorí o tom, akou konštantou sa prenasobí ceľková hodnota zdravia `Creature_stats.health`
+- Atribút `name` predstavuje názov predmetu.
+- Atribút `attack_cons` hovorí o tom, akou konštantou sa prenasobí ceľková hodnota útočného čisla `Creature_stats.attack`.
+- Atribút `defense_cons` hovorí o tom, akou konštantou sa prenasobí ceľková hodnota obranného čisla `Creature_stats.defense`.
+- Atribút `hp_cons` hovorí o tom, akou konštantou sa prenasobí ceľková hodnota zdravia `Creature_stats.health`.
+- Atribút `weight` hovorí a váhe daného predmetu.
 
-### Loot_list
+## Use case
+Každá postava má kapsu, ktorá má určitú veľkost. To znamená, že kapsa unesie len určitú váhu. Tým pádom každý predmet má svoju vlastnú váhu. Ak sa kapsa naplní, nie je možné pridať do nej ďalší predmet a hráč je spomalený, kým z nej neodstráni niektorý predmet.
 
+
+___
+## Loot_list
 Tabuľka **Loot_list** predstavuje zoznam koristi, ktoré na niektorej mape nachádzajú [`map_id -> Maps.id`]
 
 
-### Loots
+## Loots
 Tabuľka **Loots** definuje už konkrétnu korisť a opisuje kde na mape sa nachádza. Je súčasťou tabuľky **Loot_list**
 
 - Atribút `x_position` udáva x-ovú pozíciu mapy, kde sa korisť nachádza
 - Atribút `y_position` udáva y-ovú pozíciu mapy, kde sa korisť nachádza
 - Atribút `gear_id -> Gears.id` hovorí o tom o aký predmet ide a v tabuľke **Gear** sú definované jeho vlastnosti.
+
+
+## Use case
+Každá mapa má vopred určený zoznam koristí. Koristí sa nachádzajú na určitej súradnici na danej mape. Ak postava zdvihne korisť, tak zmizne z mapy a uloží sa do kapsy. Následne na mieste, kde korisť bola zdvihnutá, neobjaví sa ďalšia korisť.
