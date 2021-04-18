@@ -72,6 +72,7 @@ Tabuľka **Monsters** predstavuje jednu príšeru, ktorá má niektoré charakte
 - Každá príšera poskytuje určitý počet skúsenostných bodov [`exp_for_kill`].
 - Každá príšera má stav zabitia [`is_killed`].
 - Každá príšera patrí do nejakej kategórie [`type ->  Monster_types.id`].
+- Každá príšera sa nachádza na nejakej mape [`map_id`] na určitej súradnici [`x_position`] a [`y_position`].
 
 ## Monster_stats
 Tabuľka **Creature_stats** predstavuje vlastnosti jedného príšera [`monsters_id -> Monsters.id`]
@@ -80,9 +81,6 @@ Tabuľka **Creature_stats** predstavuje vlastnosti jedného príšera [`monsters
 - Príšera má útočnú hodnotu [`attack`].
 - Príšera má obrannú hodnotu [`defense`].
 - Príšera má určitú rýchlosť [`speed`], ktorou sa pohybuje na mape.
-- Príšera má x-ovú pozíciu na mapu, kde sa momentálne nachádza [`x_position`].
-- Príšera má y-ovú pozíciu na mapu, kde sa momentálne nachádza [`y_position`].
-- Príšera vždy nachádza na niektorej mape [`map_id -> Maps.id`].
 
 ## Monster_types
 Tabuľka **Roles** predstavuje rolu jednej postavy (**Characters**)
