@@ -102,9 +102,9 @@ DROP TABLE IF EXISTS "Maps" CASCADE;
 CREATE TABLE  "Maps" (
   "id" INT NOT NULL,
   "name" VARCHAR(45) NOT NULL,
-  "required_level" VARCHAR(45) NOT NULL,
-  "height" VARCHAR(45) NOT NULL,
-  "width" VARCHAR(45) NOT NULL,
+  "required_level" INT NOT NULL,
+  "height" INT NOT NULL,
+  "width" INT NOT NULL,
   PRIMARY KEY ("id"));
 
 
@@ -203,7 +203,6 @@ CREATE TABLE  "Monsters" (
   "is_boss" INT NOT NULL,
   "name" VARCHAR(45) NOT NULL,
   "level" INT NOT NULL,
-  "is_available" INT NOT NULL,
   "exp_for_kill" INT NOT NULL,
   "is_killed" INT NOT NULL,
   "type" INT NOT NULL,

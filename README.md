@@ -75,7 +75,7 @@ Tabuľka **Monsters** predstavuje jednu príšeru, ktorá má niektoré charakte
 - Každá príšera sa nachádza na nejakej mape [`map_id`] na určitej súradnici [`x_position`] a [`y_position`].
 
 ## Monster_stats
-Tabuľka **Creature_stats** predstavuje vlastnosti jedného príšera [`monsters_id -> Monsters.id`]
+Tabuľka **Monster_stats** predstavuje vlastnosti jedného príšera [`monsters_id -> Monsters.id`]
 - Príšera má zdravotné body [`hp`].
 - Príšera má počet životov [`lives`].
 - Príšera má útočnú hodnotu [`attack`].
@@ -83,8 +83,8 @@ Tabuľka **Creature_stats** predstavuje vlastnosti jedného príšera [`monsters
 - Príšera má určitú rýchlosť [`speed`], ktorou sa pohybuje na mape.
 
 ## Monster_types
-Tabuľka **Roles** predstavuje rolu jednej postavy (**Characters**)
-- Na základe používateľom vybranej roli budú modifikované štatistiky postavy 
+Tabuľka **Monster_types** predstavuje typ prísery (**Monsters**)
+- Na mape sa nachádzajú príšery rôzneho typu. Každá z nich má inú silnú a slabú stránku.
 - `Monster_stats.attack` bude vynásobené s konštantou `attack_cons`
 - `Monster_stats.defense` bude vynásobené s konštantou `defense_cons`
 - `Monster_stats.hp` bude vynásobené s konštantou `hp_cons`
@@ -127,6 +127,7 @@ Tabuľka **Teams** predstavuje skupinu hráčov. Skupiny umožňujú, aby členo
 ## Members
 Tabuľka **Members** predstavuje členov tímu (**Teams**)
 - Atribút `team_id` definuje ku ktorému tímu patrí daný člen.
+- Atribút `user_id` hovorí o tom, o ktorého používateľa ide.
 - V rámci tímov má každý hráč vlastné identifikačné číslo [`member_id`].
 
 ## Use case
@@ -165,7 +166,7 @@ Tabuľka **Battle_logs** predstavuje udalosti, ktoré sa udiali počas bitky. Ob
 - Atribút `damage_to_monster` hovorí o spôsobenej škode na zdraví [`Monster_stats.hp`] príšery.
 - Atribút `hit_by -> Gears.id` hovorí o zbrani s ktorou bola spôsobená škoda na zdraví.
 - Atribút `used_skill -> Skills.id` hovorí o použitej schopnosti v bitke (v prípade, ak nebola použitá žiadna schopnosť, tak má hodnotu `null`)
-- Atribút `exp_difference -> Characters.exp` je hodnota, ktorá sa buď pripočíta alebo odpočíta z ceľkovej hodnoty skúsenostných bodov.
+- Atribút `exp_difference` je hodnota, ktorá sa buď pripočíta alebo odpočíta z ceľkovej hodnoty skúsenostných bodov. [`Characters.exp`]
 
 ## Use case
 Scenár: Postava [`attacker_character_id`] sa stretne s príšerou [`target_monster_id`] a zaútočí na ňu. Vyhodnotí sa, že ide o PVE battle. Postava použije schopnosť [`used_skill`] rotating sword, ktorá spôsobí 50 damage [`damage_to_monster`] príšere. Príšera stratila veľkú časť svojho hp [`Monster_stats.hp`], ale udrie postavu mečou [`hit_by`] a spôsobí 30 damage postave [`damage_to_character`]. Postava so svojou mečou následne spôsobí kritickú škodu príšere 70 damage. Keďže príšera mala celkom 100 zdravotných bodov a len jeden život, jej zdravotné body sa stanú záporným, teda sa zmení počet životov na 0 a zomrie. Víťazom sa stáva postava, ktorá získava 100 skúsenostných bodov.
@@ -185,7 +186,7 @@ Tabuľka **Equipped_gears** predstavuje tri predmety, ktoré sa nachádzaju v ka
 - Štít [`shield`] má vlastné identifikačné číslo, ktoré ukazuje na tabuľku Gear, kde je uvedená jeho sila.
 
 ## Gears
-Tabuľka **Gear** definuje silu daného predmetu
+Tabuľka **Gears** definuje silu daného predmetu
 - Atribút `name` predstavuje názov predmetu.
 - Atribút `attack_cons` hovorí o tom, akou konštantou sa prenásobí celková hodnota útočného čísla `Characters_stats.attack`.
 - Atribút `defense_cons` hovorí o tom, akou konštantou sa prenásobí celková hodnota obranného čísla `Characters_stats.defense`.
